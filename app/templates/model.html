@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Avocado Price</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                clifford: '#da373d',
+              }
+            }
+          }
+        }
+      </script>
+    <script>
+        function clasificarInsecto(event) {
+            event.preventDefault();
+
+            const carat = document.getElementById('carat').value;
+            const color = document.getElementById('color').value;
+            const clarity = document.getElementById('clarity').value;
+            const x = document.getElementById('x').value;
+            const y = document.getElementById('y').value;
+            const z = document.getElementById('z').value;
+
+            fetch('/predict_model', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `carat=${carat}&color=${color}&clarity=${clarity}&x=${x}&y=${y}&z=${z}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('resultado').innerText = 'Error: ' + data.error;
+                } else {
+                    document.getElementById('resultado').innerText = 'Price: $' + data.price;        
+                }
+            })
+            .catch(error => {
+                document.getElementById('resultado').innerText = 'Error en la solicitud.';
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class=" w-screen h-screen flex flex-col items-center ">
+        <h1 class="text-3xl font-bold p-5">DIAMONDS PRICES</h1>
+    <form class="w-2/3 p-5 shadow-2xl border-2 flex flex-col bg-slate-100" id="formulario" onsubmit="clasificarInsecto(event)">
+        <label for="carat" class="text-xl font-bold">Carat:</label>
+        <input type="text" id="carat" name="carat"><br><br>
+
+        <label for="color" class="text-xl font-bold">Color:</label>
+        <select id="color" class="border-2 rounded "  name="color">
+            <option value="G">G</option>
+            <option value="E">E</option>
+            <option value="D">D</option>
+            <option value="F">F</option>
+            <option value="J">J</option>
+            <option value="H">H</option>
+            <option value="I">I</option>
+        </select><br><br>
+
+        <label for="clarity" class="text-xl font-bold">Clarity:</label>
+        <select id="clarity" class="border-2 rounded" name="clarity">
+            <option value="VS2">VS2</option>
+            <option value="SI2">SI2</option>
+            <option value="SI1">SI1</option>
+            <option value="VVS2">VVS2</option>
+            <option value="VS1">VS1</option>
+            <option value="VVS1">VVS1</option>
+            <option value="I1">I1</option>
+            <option value="IF">IF</option>
+        </select><br><br>
+
+        <label for="x" class="text-xl font-bold">X:</label>
+        <input type="text" id="x" name="x" class="border-2 rounded "><br><br>
+
+        <label for="y" class="text-xl font-bold">Y:</label>
+        <input type="text" id="y" name="y" class="border-2 rounded "><br><br>
+
+        <label for="z" class="text-xl font-bold">Z:</label>
+        <input type="text" id="z" name="z" class="border-2 rounded "><br><br>
+        <input type="submit" class=" rounded bg-blue-500 hover:bg-blue-700 text-white font-bold p-2" value="Enviar">
+    </form>
+    <p class=" text-3xl font-bold p-5"  id="resultado"></p>
+    </div>
+</body>
+</html>
